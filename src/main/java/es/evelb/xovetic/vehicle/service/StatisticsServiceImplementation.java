@@ -21,9 +21,23 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
 	@Override
 	public List<Statistic> get(String feature) {
-		List<Statistic> result = new ArrayList<>();
-		Map<String, Integer> appearancesByFeature = new HashMap<>();
+		List<Statistic> statistics = new ArrayList<>();
 		List<Vehicle> crashedVehicles = vehicleRepository.findByCrashedDateNotIsNull();
+		Map<String, Integer> appearancesByFeature = countAppereancesByFeature(feature, crashedVehicles);
+		for (String key : appearancesByFeature.keySet()) {
+			Statistic statistic = Statistic.builder().value(key)
+					.percentage(calculatePercentage(appearancesByFeature.get(key), crashedVehicles.size())).build();
+			statistics.add(statistic);
+		}
+		return statistics;
+	}
+
+	private Double calculatePercentage(Integer appereances, Integer samplingSize) {
+		return ((double) appereances) / samplingSize;
+	}
+
+	private Map<String, Integer> countAppereancesByFeature(String feature, List<Vehicle> crashedVehicles) {
+		Map<String, Integer> appearancesByFeature = new HashMap<>();
 		for (Vehicle crashedVehicle : crashedVehicles) {
 			Optional<String> featureValue = crashedVehicle.getValueByFeature(feature);
 			Integer counter = appearancesByFeature.get(featureValue.get());
@@ -32,11 +46,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
 			}
 			appearancesByFeature.put(featureValue.get(), ++counter);
 		}
-		for (String key : appearancesByFeature.keySet()) {
-			result.add(Statistic.builder().value(key)
-					.percentage(((double) appearancesByFeature.get(key)) / crashedVehicles.size()).build()
-			);
-		}
-		return result;
+		return appearancesByFeature;
 	}
+
 }
