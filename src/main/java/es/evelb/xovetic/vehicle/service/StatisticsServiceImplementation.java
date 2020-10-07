@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import es.evelb.xovetic.vehicle.entities.Vehicle;
 import es.evelb.xovetic.vehicle.service.dtos.Statistic;
+import es.evelb.xovetic.vehicle.service.exceptions.NotFoundFeatureException;
 import es.evelb.xovetic.vehicle.service.repository.VehicleRepository;
 
 @Service
@@ -20,7 +21,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
 	private VehicleRepository vehicleRepository;
 
 	@Override
-	public List<Statistic> get(String feature) {
+	public List<Statistic> get(String feature) throws NotFoundFeatureException {
+		if(feature == null) {
+			throw new NotFoundFeatureException();
+		}
 		List<Statistic> statistics = new ArrayList<>();
 		List<Vehicle> crashedVehicles = vehicleRepository.findByCrashedDateNotIsNull();
 		Map<String, Integer> appearancesByFeature = countAppereancesByFeature(feature, crashedVehicles);

@@ -1,6 +1,7 @@
 package es.evelb.xovetic.vehicle.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import es.evelb.xovetic.vehicle.entities.Vehicle;
 import es.evelb.xovetic.vehicle.service.StatisticsService;
 import es.evelb.xovetic.vehicle.service.StatisticsServiceImplementation;
 import es.evelb.xovetic.vehicle.service.dtos.Statistic;
+import es.evelb.xovetic.vehicle.service.exceptions.NotFoundFeatureException;
 import es.evelb.xovetic.vehicle.service.repository.VehicleRepository;
 
 @SpringBootTest(classes = StatisticsServiceImplementation.class)
@@ -30,13 +32,20 @@ public class StatisticsServiceShould {
 	private static final String COLOR_RED = "red";
 
 	@Test
-	public void return_crashed_car_statistics_by_color() {
+	public void return_crashed_car_statistics_by_color() throws NotFoundFeatureException {
 		when(vehicleRepository.findByCrashedDateNotIsNull()).thenReturn(generateVehicleList());
 		List<Statistic> statatistics = statisctsService.get(FEATURE_COLOR);
 		Statistic redStatistic = statatistics.stream().filter(statistic -> statistic.getValue().equals(COLOR_RED))
 				.findFirst().get();
 		final Double RED_COLOR_CRASHED_CARS_PERCENTAGE = 0.4;
 		assertEquals(RED_COLOR_CRASHED_CARS_PERCENTAGE, redStatistic.getPercentage());
+	}
+	
+	@Test
+	public void throw_invalid_feature_exception_when_the_feature_is_null() {
+		assertThrows(NotFoundFeatureException.class, () -> {
+			statisctsService.get(null);
+		});
 	}
 
 	private List<Vehicle> generateVehicleList() {
