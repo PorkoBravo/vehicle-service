@@ -22,9 +22,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
 	@Override
 	public List<Statistic> get(String feature) throws NotFoundFeatureException {
-		if(feature == null) {
-			throw new NotFoundFeatureException();
-		}
+		Vehicle.checkThatFieldExistis(feature);
 		List<Statistic> statistics = new ArrayList<>();
 		List<Vehicle> crashedVehicles = vehicleRepository.findByCrashedDateNotIsNull();
 		Map<String, Integer> appearancesByFeature = countAppereancesByFeature(feature, crashedVehicles);

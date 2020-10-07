@@ -29,6 +29,7 @@ public class StatisticsServiceShould {
 	VehicleRepository vehicleRepository;
 
 	private static final String FEATURE_COLOR = "color";
+	private static final String FEATURE_NOT_EXISTS = "featureThatWillNeverExists...NEVER!";
 	private static final String COLOR_RED = "red";
 
 	@Test
@@ -45,6 +46,13 @@ public class StatisticsServiceShould {
 	public void throw_invalid_feature_exception_when_the_feature_is_null() {
 		assertThrows(NotFoundFeatureException.class, () -> {
 			statisctsService.get(null);
+		});
+	}
+	
+	@Test
+	public void throw_exception_when_the_feature_does_not_exists() {
+		assertThrows(NotFoundFeatureException.class, () -> {
+			statisctsService.get(FEATURE_NOT_EXISTS);
 		});
 	}
 
