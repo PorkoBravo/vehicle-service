@@ -55,6 +55,13 @@ public class StatisticsServiceShould {
 			statisctsService.get(FEATURE_NOT_EXISTS);
 		});
 	}
+	
+	@Test
+	public void return_empty_list_when_there_is_not_vehicles() throws NotFoundFeatureException {
+		when(vehicleRepository.findByCrashedDateNotIsNull()).thenReturn(new ArrayList<>());
+		List<Statistic> statatistics = statisctsService.get(FEATURE_COLOR);
+		assertEquals(0, statatistics.size());
+	}
 
 	private List<Vehicle> generateVehicleList() {
 		List<Vehicle> result = new ArrayList<>();
