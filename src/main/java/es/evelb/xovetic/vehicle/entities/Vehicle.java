@@ -14,7 +14,8 @@ import lombok.Setter;
 public class Vehicle {
 
 	private String color;
-
+	private String model;
+	
 	public Optional<String> getValueByFeature(String feature) {
 		Optional<Field> field = getField(Vehicle.class, feature);
 		String value = null;
