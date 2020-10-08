@@ -3,7 +3,7 @@ package es.evelb.xovetic.vehicle.entities;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import es.evelb.xovetic.vehicle.service.exceptions.NotFoundFeatureException;
+import es.evelb.xovetic.vehicle.service.exceptions.FeatureNotFoundException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +15,7 @@ public class Vehicle {
 
 	private String color;
 	private String model;
-	
+
 	public Optional<String> getValueByFeature(String feature) {
 		Optional<Field> field = getField(Vehicle.class, feature);
 		String value = null;
@@ -43,10 +43,10 @@ public class Vehicle {
 		return Optional.empty();
 	}
 
-	public static void checkThatFieldExistis(String feature) throws NotFoundFeatureException {
+	public static void checkThatFieldExistis(String feature) throws FeatureNotFoundException {
 		Optional<Field> field = getField(Vehicle.class, feature);
 		if (!field.isPresent()) {
-			throw new NotFoundFeatureException();
+			throw new FeatureNotFoundException();
 		}
 	}
 

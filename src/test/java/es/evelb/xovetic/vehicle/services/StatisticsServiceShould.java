@@ -16,7 +16,7 @@ import es.evelb.xovetic.vehicle.entities.Vehicle;
 import es.evelb.xovetic.vehicle.service.StatisticsService;
 import es.evelb.xovetic.vehicle.service.StatisticsServiceImplementation;
 import es.evelb.xovetic.vehicle.service.dtos.Statistic;
-import es.evelb.xovetic.vehicle.service.exceptions.NotFoundFeatureException;
+import es.evelb.xovetic.vehicle.service.exceptions.FeatureNotFoundException;
 import es.evelb.xovetic.vehicle.service.repository.VehicleRepository;
 
 @SpringBootTest(classes = StatisticsServiceImplementation.class)
@@ -36,7 +36,7 @@ public class StatisticsServiceShould {
 	private static final String MODEL_QASHQAI = "Nissan Qashqai J10";
 
 	@Test
-	public void return_crashed_car_statistics_by_color() throws NotFoundFeatureException {
+	public void return_crashed_car_statistics_by_color() throws FeatureNotFoundException {
 		when(vehicleRepository.findByCrashedDateNotIsNull()).thenReturn(generateVehicleList());
 		List<Statistic> statatistics = statisctsService.get(FEATURE_COLOR);
 		Statistic redStatistic = statatistics.stream().filter(statistic -> statistic.getValue().equals(COLOR_RED))
@@ -44,30 +44,30 @@ public class StatisticsServiceShould {
 		final Double RED_COLOR_CRASHED_CARS_PERCENTAGE = 0.4;
 		assertEquals(RED_COLOR_CRASHED_CARS_PERCENTAGE, redStatistic.getPercentage());
 	}
-	
+
 	@Test
 	public void throw_invalid_feature_exception_when_the_feature_is_null() {
-		assertThrows(NotFoundFeatureException.class, () -> {
+		assertThrows(FeatureNotFoundException.class, () -> {
 			statisctsService.get(null);
 		});
 	}
-	
+
 	@Test
 	public void throw_exception_when_the_feature_does_not_exists() {
-		assertThrows(NotFoundFeatureException.class, () -> {
+		assertThrows(FeatureNotFoundException.class, () -> {
 			statisctsService.get(FEATURE_NOT_EXISTS);
 		});
 	}
-	
+
 	@Test
-	public void return_empty_list_when_there_is_not_vehicles() throws NotFoundFeatureException {
+	public void return_empty_list_when_there_is_not_vehicles() throws FeatureNotFoundException {
 		when(vehicleRepository.findByCrashedDateNotIsNull()).thenReturn(new ArrayList<>());
 		List<Statistic> statatistics = statisctsService.get(FEATURE_COLOR);
 		assertEquals(0, statatistics.size());
 	}
-	
+
 	@Test
-	public void return_crashed_car_statistics_by_model() throws NotFoundFeatureException {
+	public void return_crashed_car_statistics_by_model() throws FeatureNotFoundException {
 		when(vehicleRepository.findByCrashedDateNotIsNull()).thenReturn(generateVehicleList());
 		List<Statistic> statatistics = statisctsService.get(FEATURE_MODEL);
 		Statistic redStatistic = statatistics.stream().filter(statistic -> statistic.getValue().equals(MODEL_SAXO_VTS))
@@ -75,7 +75,7 @@ public class StatisticsServiceShould {
 		final Double SAXO_MODEL_CRASHED_CARS_PERCENTAGE = 0.8;
 		assertEquals(SAXO_MODEL_CRASHED_CARS_PERCENTAGE, redStatistic.getPercentage());
 	}
-	
+
 	private List<Vehicle> generateVehicleList() {
 		List<Vehicle> result = new ArrayList<>();
 		result.add(Vehicle.builder().color(COLOR_RED).model(MODEL_SAXO_VTS).build());
